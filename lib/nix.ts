@@ -20,7 +20,7 @@ class Schema {
         return this;
     }
 
-    required(message: string) {
+    required(message?: string) {
         this.validations.push({
             name: "required",
             message: message,
@@ -28,7 +28,7 @@ class Schema {
         });
         return this;
     }
-    email(message: string) {
+    email(message?: string) {
         this.validations.push({
             name: "email",
             message: message,
@@ -37,7 +37,7 @@ class Schema {
         return this;
     }
 
-    string(message: string) {
+    string(message?: string) {
         this.validations.push({
             name: "string",
             message: message,
@@ -46,7 +46,7 @@ class Schema {
         return this;
     }
 
-    number(message: string) {
+    number(message?: string) {
         this.validations.push({
             name: "number",
             message: message,
@@ -56,7 +56,7 @@ class Schema {
     }
 
 
-    integer(message: string) {
+    integer(message?: string) {
         this.validations.push({
             name: "integer",
             message: message,
@@ -65,7 +65,7 @@ class Schema {
         return this;
     }
 
-    min(min: number, message: string) {
+    min(min: number, message?: string) {
         this.validations.push({
             name: "min",
             message: message,
@@ -74,7 +74,7 @@ class Schema {
         return this;
     }
 
-    max(max: number, message: string) {
+    max(max: number, message?: string) {
         this.validations.push({
             name: "max",
             message: message,
@@ -83,7 +83,7 @@ class Schema {
         return this;
     }
 
-    positive(message: string) {
+    positive(message?: string) {
         this.validations.push({
             name: "positive",
             message: message,
@@ -92,7 +92,7 @@ class Schema {
         return this;
     }
 
-    negative(message: string) {
+    negative(message?: string) {
         this.validations.push({
             name: "negative",
             message: message,
@@ -101,7 +101,7 @@ class Schema {
         return this;
     }
 
-    regexp(reg: RegExp, message: string) {
+    regexp(reg: RegExp, message?: string) {
         this.validations.push({
             name: "regexp",
             message: message,
@@ -109,7 +109,7 @@ class Schema {
         });
         return this;
     }
-    custom(validator: IValidator, message: string) {
+    custom(validator: IValidator, message?: string) {
         this.validations.push({
             name: "custom",
             message: message,
@@ -118,7 +118,7 @@ class Schema {
         return this;
     }
 
-    conditional(path: string, schema: Schema, message: string) {
+    conditional(path: string, schema: Schema, message?: string) {
         this.validations.push({
             name: "conditional",
             message: message,
@@ -126,16 +126,122 @@ class Schema {
         });
         return this;
     }
+
+    validate(values: any, path: string[] = [], mapping: { [key: string]: any }) {
+        let errors;
+        for (const validation of this.validations as Array<IValidation>) {
+            if (validation.name == "optional") {
+                if (!validation.validator(values, mapping)) break;
+                continue;
+            } else if (validation.name == "required") {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break
+                else continue;
+            } else if (validation.name == "custom") {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break
+                else continue;
+            } else if (validation.name == "conditional") {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break
+                else continue;
+            } else if (!validation.validator(values, mapping)) {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break;
+            }
+        }
+        return errors;
+    }
 }
 
 
 class ArraySchema {
     validations: Array<IValidation>;
-    constructor() {
+    values: any;
+    message: any;
+    constructor(values: Array<ArraySchema | ObjectSchema | Schema>, message?: string) {
         this.validations = [];
+        this.values = values;
+        this.message = message;
         return this;
     }
 
+    min(min: number, message?: string) {
+        this.validations.push({
+            name: "min",
+            message: message,
+            validator: (value, mapping) => value.length >= min,
+        });
+        return this;
+    }
+
+    max(max: number, message?: string) {
+        this.validations.push({
+            name: "max",
+            message: message,
+            validator: (value, mapping) => value.length <= max,
+        });
+        return this;
+    }
+
+    validate(values: any, path: string[] = [], mapping: { [key: string]: any }) {
+        let errors: any;
+        if (!Array.isArray(values)) {
+            errors = `${path.join(".")} is not an array.`;
+        } else {
+            for (const validation of this.validations) {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break;
+                continue;
+            }
+            if (errors) return errors;
+            //validate rest of the things
+            errors = [];
+            for (let key in this.values) {
+                errors[key] = Nix.loop(values?.[Number(key)], this.values[key], [...path, key], mapping);
+                if (!errors[key]) delete errors[key];
+                if (errors.length == 0) errors = undefined;
+            }
+        }
+        return errors;
+    }
+
+
+}
+
+class ObjectSchema {
+    values: any;
+    validations: Array<IValidation>;
+    message: any;
+    constructor(values: { [key: string]: ObjectSchema | ArraySchema | Schema }, message?: string) {
+        this.validations = [];
+        this.values = values;
+        this.message = message;
+        return this;
+    }
+
+    validate(values: any, path: string[] = [], mapping: { [key: string]: any }) {
+        let errors: any;
+        if (typeof values != "object") {
+            errors = `${path.join(".")} is not an object.`;
+        } else {
+
+            for (const validation of this.validations) {
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                if (errors) break;
+                continue;
+            }
+            if (errors) return errors;
+
+            errors = {};
+            for (let key in this.values) {
+                errors[key] = Nix.loop(values?.[key], this.values[key], [...path, key], mapping);
+                if (!errors[key]) delete errors[key];
+                if (Object.entries(errors).length == 0) errors = undefined;
+            }
+        }
+        return errors;
+    }
 
 }
 
@@ -144,38 +250,15 @@ class Nix {
     constructor(schema: any) {
         this.schema = schema;
     }
-    loop(values: any, schema: any, path: string[] = [], mapping: { [key: string]: any }) {
+    static loop(values: any, schema: any, path: string[] = [], mapping: { [key: string]: any }) {
         let errors: any;
         if (schema instanceof Schema) {
-            for (const validation of schema.validations as Array<IValidation>) {
-                if (validation.name == "optional") {
-                    if (!validation.validator(values, mapping)) break;
-                    continue;
-                } else if (validation.name == "required") {
-                    errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
-                    if (errors) break
-                    else continue;
-                } else if (validation.name == "custom") {
-                    errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
-                    if (errors) break
-                    else continue;
-                } else if (validation.name == "conditional") {
-                    errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
-                    if (errors) break
-                    else continue;
-                } else if (!validation.validator(values, mapping)) {
-                    errors = validation.message ?? `${path.join(".")} should be ${validation.name}`;
-                    if (errors) break;
-                }
-            }
-        } else if (typeof schema === "object" && schema !== null) {
-            errors = Array.isArray(schema) ? [] : {};
-            for (let key in schema) {
-                errors[key] = this.loop(values?.[key], schema[key], [...path, key], mapping);
-                if (!errors[key] || Object.values(errors[key]).length == 0) {
-                    delete errors[key];
-                }
-            }
+            errors = schema.validate(values, path, mapping);
+        } else if (schema instanceof ObjectSchema) {
+            console.log(values);
+            errors = schema.validate(values, path, mapping);
+        } else if (schema instanceof ArraySchema) {
+            errors = schema.validate(values, path, mapping);
         }
         return errors;
     }
@@ -192,23 +275,25 @@ class Nix {
             }
         }
         valueLoop(values);
-        const errors = this.loop(values, this.schema, [], mapping);
+        const errors = Nix.loop(values, this.schema, [], mapping);
         return errors;
     }
 
     static optional = () => new Schema().optional()
-    static required = (message: string) => new Schema().required(message)
-    static email = (message: string) => new Schema().email(message)
-    static string = (message: string) => new Schema().string(message)
-    static number = (message: string) => new Schema().number(message)
-    static integer = (message: string) => new Schema().integer(message)
-    static min = (min: number, message: string) => new Schema().min(min, message)
-    static max = (max: number, message: string) => new Schema().max(max, message)
-    static positive = (message: string) => new Schema().positive(message)
-    static negative = (message: string) => new Schema().negative(message)
-    static regexp = (expression: RegExp, message: string) => new Schema().regexp(expression, message)
-    static custom = (validator: IValidator, message: string) => new Schema().custom(validator, message)
-    static conditional = (path: string, schema: Schema, message: string) => new Schema().conditional(path, schema, message)
+    static required = (message?: string) => new Schema().required(message)
+    static email = (message?: string) => new Schema().email(message)
+    static string = (message?: string) => new Schema().string(message)
+    static number = (message?: string) => new Schema().number(message)
+    static integer = (message?: string) => new Schema().integer(message)
+    static min = (min: number, message?: string) => new Schema().min(min, message)
+    static max = (max: number, message?: string) => new Schema().max(max, message)
+    static positive = (message?: string) => new Schema().positive(message)
+    static negative = (message?: string) => new Schema().negative(message)
+    static regexp = (expression: RegExp, message?: string) => new Schema().regexp(expression, message)
+    static custom = (validator: IValidator, message?: string) => new Schema().custom(validator, message)
+    static conditional = (path: string, schema: Schema, message?: string) => new Schema().conditional(path, schema, message)
+    static array = (values: Array<Schema | ObjectSchema | ArraySchema>, message?: string) => new ArraySchema(values, message)
+    static object = (values: { [key: string]: ObjectSchema | ArraySchema | Schema }, message?: string) => new ObjectSchema(values, message)
 
 }
 export default Nix;
