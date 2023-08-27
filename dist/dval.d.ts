@@ -48,7 +48,7 @@ declare class ObjectSchema {
         [key: string]: any;
     }): any;
 }
-declare class Nix {
+declare class Dval {
     schema: any;
     constructor(schema: any);
     static loop(values: any, schema: any, path: string[] | undefined, mapping: {
@@ -76,4 +76,4 @@ declare class Nix {
         [key: string]: Schema | ArraySchema | ObjectSchema;
     }, message?: string) => ObjectSchema;
 }
-export default Nix;
+export default Dval;

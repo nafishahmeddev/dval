@@ -1,2 +1,2 @@
-declare const _default: "./nix";
-export default _default;
+import Dval from "./dval";
+export default Dval;

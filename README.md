@@ -1,31 +1,31 @@
-Nix: Data Validation Module
+Dval: Data Validation Module
 
-Nix is a lightweight and intuitive data validation module designed to validate data against specified schemas. With Nix, you can ensure that your data adheres to predefined structures, types, and constraints, helping you maintain data integrity and reliability in your applications.
+Dval is a lightweight and intuitive data validation module designed to validate data against specified schemas. With Dval, you can ensure that your data adheres to predefined structures, types, and constraints, helping you maintain data integrity and reliability in your applications.
 
 ## Installation
 
-You can install Nix using your preferred package manager. Here's how you can do it using npm:
+You can install Dval using your preferred package manager. Here's how you can do it using npm:
 
-npm install nix
+npm install dval
 
 ## Getting Started
 
-To start using Nix for data validation, follow these simple steps:
+To start using Dval for data validation, follow these simple steps:
 
 1. Import the module:
 
 ```
-const nix = require('nix');
+const dval = require('dval');
 ```
 
 2. Create a Schema:
 
    Define a schema that describes the structure and constraints for your data. You can use various validation rules to specify the expected properties, types, and conditions.
 ```
-   const schema = nix.object({
-   name: nix.string().required(),
-   age: nix.number().positive().integer(),
-   email: nix.string().email(),
+   const schema = dval.object({
+   name: dval.string().required(),
+   age: dval.number().positive().integer(),
+   email: dval.string().email(),
    // Add more validation rules as needed
    });
 ```
@@ -50,7 +50,7 @@ const nix = require('nix');
 
 ## Validation Rules
 
-Nix provides a range of validation rules that you can use to define your schemas. Some of the available rules include:
+Dval provides a range of validation rules that you can use to define your schemas. Some of the available rules include:
 
 - .string(): Validates that the value is a string.
 - .number(): Validates that the value is a number.
@@ -66,19 +66,19 @@ You can chain these rules together to create complex validation scenarios tailor
 
 ## Customization
 
-Nix also allows you to create custom validation rules and messages. This flexibility enables you to address specific validation needs unique to your project.
+Dval also allows you to create custom validation rules and messages. This flexibility enables you to address specific validation needs unique to your project.
 
 ```
-const customRule = nix.string().custom((value, mapping)=>{
+const customRule = dval.string().custom((value, mapping)=>{
   return value == "OK";
 });
 ```
 
 ## Conclusion
 
-Nix simplifies the process of data validation by providing an easy-to-use interface to define and enforce data schemas. By integrating Nix into your projects, you can enhance data quality, reduce errors, and build more robust applications.
+Dval simplifies the process of data validation by providing an easy-to-use interface to define and enforce data schemas. By integrating Dval into your projects, you can enhance data quality, reduce errors, and build more robust applications.
 
-For more detailed information and examples, refer to the official documentation: [https://github.com/nafishahmeddev/nix](https://github.com/nafishahmeddev/nix).
+For more detailed information and examples, refer to the official documentation: [https://github.com/nafishahmeddev/dval](https://github.com/nafishahmeddev/dval).
 
 ## License
 

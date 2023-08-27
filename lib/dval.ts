@@ -122,7 +122,7 @@ class Schema {
         this.validations.push({
             name: "conditional",
             message: message,
-            validator: (value, mapping) => !!new Nix(schema).validate(mapping[path])
+            validator: (value, mapping) => !!new Dval(schema).validate(mapping[path])
         });
         return this;
     }
@@ -198,7 +198,7 @@ class ArraySchema {
             //validate rest of the things
             errors = [];
             for (let key in this.values) {
-                errors[key] = Nix.loop(values?.[Number(key)], this.values[key], [...path, key], mapping);
+                errors[key] = Dval.loop(values?.[Number(key)], this.values[key], [...path, key], mapping);
                 errors = errors.filter((error: any )=>!!error);
                 if (errors.length == 0) errors = undefined;
                 console.log(errors)
@@ -236,7 +236,7 @@ class ObjectSchema {
 
             errors = {};
             for (let key in this.values) {
-                errors[key] = Nix.loop(values?.[key], this.values[key], [...path, key], mapping);
+                errors[key] = Dval.loop(values?.[key], this.values[key], [...path, key], mapping);
                 if (!errors[key]) delete errors[key];
                 if (Object.entries(errors).length == 0) errors = undefined;
             }
@@ -246,7 +246,7 @@ class ObjectSchema {
 
 }
 
-class Nix {
+class Dval {
     schema: any;
     constructor(schema: any) {
         this.schema = schema;
@@ -276,7 +276,7 @@ class Nix {
             }
         }
         valueLoop(values);
-        const errors = Nix.loop(values, this.schema, [], mapping);
+        const errors = Dval.loop(values, this.schema, [], mapping);
         return { 
             errors : errors,
             isValid: !errors
@@ -300,4 +300,4 @@ class Nix {
     static object = (values: { [key: string]: ObjectSchema | ArraySchema | Schema }, message?: string) => new ObjectSchema(values, message)
 
 }
-export default Nix;
+export default Dval;

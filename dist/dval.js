@@ -104,7 +104,7 @@ class Schema {
         this.validations.push({
             name: "conditional",
             message: message,
-            validator: (value, mapping) => !!new Nix(schema).validate(mapping[path])
+            validator: (value, mapping) => !!new Dval(schema).validate(mapping[path])
         });
         return this;
     }
@@ -188,7 +188,7 @@ class ArraySchema {
             //validate rest of the things
             errors = [];
             for (let key in this.values) {
-                errors[key] = Nix.loop(values === null || values === void 0 ? void 0 : values[Number(key)], this.values[key], [...path, key], mapping);
+                errors[key] = Dval.loop(values === null || values === void 0 ? void 0 : values[Number(key)], this.values[key], [...path, key], mapping);
                 errors = errors.filter((error) => !!error);
                 if (errors.length == 0)
                     errors = undefined;
@@ -223,7 +223,7 @@ class ObjectSchema {
                 return errors;
             errors = {};
             for (let key in this.values) {
-                errors[key] = Nix.loop(values === null || values === void 0 ? void 0 : values[key], this.values[key], [...path, key], mapping);
+                errors[key] = Dval.loop(values === null || values === void 0 ? void 0 : values[key], this.values[key], [...path, key], mapping);
                 if (!errors[key])
                     delete errors[key];
                 if (Object.entries(errors).length == 0)
@@ -234,7 +234,7 @@ class ObjectSchema {
             return errors;
     }
 }
-class Nix {
+class Dval {
     constructor(schema) {
         this.schema = schema;
     }
@@ -265,26 +265,26 @@ class Nix {
             }
         };
         valueLoop(values);
-        const errors = Nix.loop(values, this.schema, [], mapping);
+        const errors = Dval.loop(values, this.schema, [], mapping);
         return {
             errors: errors,
             isValid: !errors
         };
     }
 }
-Nix.optional = () => new Schema().optional();
-Nix.required = (message) => new Schema().required(message);
-Nix.email = (message) => new Schema().email(message);
-Nix.string = (message) => new Schema().string(message);
-Nix.number = (message) => new Schema().number(message);
-Nix.integer = (message) => new Schema().integer(message);
-Nix.min = (min, message) => new Schema().min(min, message);
-Nix.max = (max, message) => new Schema().max(max, message);
-Nix.positive = (message) => new Schema().positive(message);
-Nix.negative = (message) => new Schema().negative(message);
-Nix.regexp = (expression, message) => new Schema().regexp(expression, message);
-Nix.custom = (validator, message) => new Schema().custom(validator, message);
-Nix.conditional = (path, schema, message) => new Schema().conditional(path, schema, message);
-Nix.array = (values, message) => new ArraySchema(values, message);
-Nix.object = (values, message) => new ObjectSchema(values, message);
-exports.default = Nix;
+Dval.optional = () => new Schema().optional();
+Dval.required = (message) => new Schema().required(message);
+Dval.email = (message) => new Schema().email(message);
+Dval.string = (message) => new Schema().string(message);
+Dval.number = (message) => new Schema().number(message);
+Dval.integer = (message) => new Schema().integer(message);
+Dval.min = (min, message) => new Schema().min(min, message);
+Dval.max = (max, message) => new Schema().max(max, message);
+Dval.positive = (message) => new Schema().positive(message);
+Dval.negative = (message) => new Schema().negative(message);
+Dval.regexp = (expression, message) => new Schema().regexp(expression, message);
+Dval.custom = (validator, message) => new Schema().custom(validator, message);
+Dval.conditional = (path, schema, message) => new Schema().conditional(path, schema, message);
+Dval.array = (values, message) => new ArraySchema(values, message);
+Dval.object = (values, message) => new ObjectSchema(values, message);
+exports.default = Dval;
