@@ -238,8 +238,8 @@ class ObjectSchema {
             for (let key in this.values) {
                 errors[key] = Dval.loop(values?.[key], this.values[key], [...path, key], mapping);
                 if (!errors[key]) delete errors[key];
-                if (Object.entries(errors).length == 0) errors = undefined;
             }
+            if (Object.entries(errors).length == 0) errors = undefined;
         }
         if(errors) return errors;
     }

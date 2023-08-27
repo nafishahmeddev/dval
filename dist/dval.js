@@ -226,9 +226,9 @@ class ObjectSchema {
                 errors[key] = Dval.loop(values === null || values === void 0 ? void 0 : values[key], this.values[key], [...path, key], mapping);
                 if (!errors[key])
                     delete errors[key];
-                if (Object.entries(errors).length == 0)
-                    errors = undefined;
             }
+            if (Object.entries(errors).length == 0)
+                errors = undefined;
         }
         if (errors)
             return errors;
