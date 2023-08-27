@@ -134,19 +134,19 @@ class Schema {
                 if (!validation.validator(values, mapping)) break;
                 continue;
             } else if (validation.name == "required") {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break
                 else continue;
             } else if (validation.name == "custom") {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break
                 else continue;
             } else if (validation.name == "conditional") {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break
                 else continue;
             } else if (!validation.validator(values, mapping)) {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break;
             }
         }
@@ -190,7 +190,7 @@ class ArraySchema {
             errors = `${path.join(".")} is not an array.`;
         } else {
             for (const validation of this.validations) {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break;
                 continue;
             }
@@ -228,7 +228,7 @@ class ObjectSchema {
         } else {
 
             for (const validation of this.validations) {
-                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is required.` : undefined
+                errors = !validation.validator(values, mapping) ? validation.message ?? `${path.join(".")} is ${validation.name}.` : undefined
                 if (errors) break;
                 continue;
             }

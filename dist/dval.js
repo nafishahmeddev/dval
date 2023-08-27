@@ -118,28 +118,28 @@ class Schema {
                 continue;
             }
             else if (validation.name == "required") {
-                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
                 else
                     continue;
             }
             else if (validation.name == "custom") {
-                errors = !validation.validator(values, mapping) ? (_b = validation.message) !== null && _b !== void 0 ? _b : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_b = validation.message) !== null && _b !== void 0 ? _b : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
                 else
                     continue;
             }
             else if (validation.name == "conditional") {
-                errors = !validation.validator(values, mapping) ? (_c = validation.message) !== null && _c !== void 0 ? _c : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_c = validation.message) !== null && _c !== void 0 ? _c : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
                 else
                     continue;
             }
             else if (!validation.validator(values, mapping)) {
-                errors = !validation.validator(values, mapping) ? (_d = validation.message) !== null && _d !== void 0 ? _d : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_d = validation.message) !== null && _d !== void 0 ? _d : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
             }
@@ -178,7 +178,7 @@ class ArraySchema {
         }
         else {
             for (const validation of this.validations) {
-                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
                 continue;
@@ -214,7 +214,7 @@ class ObjectSchema {
         }
         else {
             for (const validation of this.validations) {
-                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is required.` : undefined;
+                errors = !validation.validator(values, mapping) ? (_a = validation.message) !== null && _a !== void 0 ? _a : `${path.join(".")} is ${validation.name}.` : undefined;
                 if (errors)
                     break;
                 continue;

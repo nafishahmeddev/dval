@@ -1,3 +1,3 @@
-import Dval from "./../dist/dval";
+import Dval from "./dval";
 export default Dval;
 module.exports = Dval;
