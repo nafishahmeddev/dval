@@ -199,11 +199,12 @@ class ArraySchema {
             errors = [];
             for (let key in this.values) {
                 errors[key] = Nix.loop(values?.[Number(key)], this.values[key], [...path, key], mapping);
-                if (!errors[key]) delete errors[key];
+                errors = errors.filter((error: any )=>!!error);
                 if (errors.length == 0) errors = undefined;
+                console.log(errors)
             }
         }
-        return errors;
+        if(errors) return errors;
     }
 
 
@@ -240,7 +241,7 @@ class ObjectSchema {
                 if (Object.entries(errors).length == 0) errors = undefined;
             }
         }
-        return errors;
+        if(errors) return errors;
     }
 
 }
