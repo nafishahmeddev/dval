@@ -14,23 +14,26 @@ To start using Nix for data validation, follow these simple steps:
 
 1. Import the module:
 
-   const nix = require('nix');
+```
+const nix = require('nix');
+```
 
 2. Create a Schema:
 
    Define a schema that describes the structure and constraints for your data. You can use various validation rules to specify the expected properties, types, and conditions.
-
+```
    const schema = nix.object({
-     name: nix.string().required(),
-     age: nix.number().positive().integer(),
-     email: nix.string().email(),
-     // Add more validation rules as needed
+   name: nix.string().required(),
+   age: nix.number().positive().integer(),
+   email: nix.string().email(),
+   // Add more validation rules as needed
    });
-
+```
 3. Validate Data:
 
    Use the schema to validate your data. Pass the data through the schema to ensure it conforms to the defined rules.
 
+```
    const data = {
      name: 'John Doe',
      age: 28,
@@ -43,6 +46,7 @@ To start using Nix for data validation, follow these simple steps:
    } else {
      console.error('Validation errors:', validationResult.errors);
    }
+```
 
 ## Validation Rules
 
@@ -54,6 +58,8 @@ Nix provides a range of validation rules that you can use to define your schemas
 - .required(): Validates that the value is present.
 - .positive(): Validates that the number is positive.
 - .email(): Validates that the string is in email format.
+- .array(): Validates that the value is an array.
+- .object(): Validates that the value is an object.
 - And many more...
 
 You can chain these rules together to create complex validation scenarios tailored to your data's requirements.
@@ -62,11 +68,11 @@ You can chain these rules together to create complex validation scenarios tailor
 
 Nix also allows you to create custom validation rules and messages. This flexibility enables you to address specific validation needs unique to your project.
 
-const customRule = nix.string().test({
-  name: 'customRule',
-  message: '${path} must start with a capital letter',
-  test: value => /^[A-Z]/.test(value)
+```
+const customRule = nix.string().custom((value, mapping)=>{
+  return value == "OK";
 });
+```
 
 ## Conclusion
 

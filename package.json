@@ -4,15 +4,25 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "nodemon ./lib/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_ENV=dev nodemon src/example/index.ts",
+    "build": "tsc --build --verbose",
+    "prepublish": "tsc --build --verbose"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "validation",
+    "yup",
+    "joi",
+    "data-validator",
+    "schema-validator"
+  ],
+  "author": "Nafish Ahmed <nafish.ahmed.dev@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nafishahmeddev/nix"
   }
 }

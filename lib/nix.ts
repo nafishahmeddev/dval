@@ -277,7 +277,10 @@ class Nix {
         }
         valueLoop(values);
         const errors = Nix.loop(values, this.schema, [], mapping);
-        return errors;
+        return { 
+            errors : errors,
+            isValid: !errors
+        }
     }
 
     static optional = () => new Schema().optional()
