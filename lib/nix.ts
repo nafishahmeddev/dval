@@ -55,6 +55,16 @@ class Schema {
         return this;
     }
 
+
+    integer(message: string) {
+        this.validations.push({
+            name: "integer",
+            message: message,
+            validator: (value, mapping) => value && typeof value == "number"
+        });
+        return this;
+    }
+
     min(min: number, message: string) {
         this.validations.push({
             name: "min",
@@ -69,6 +79,24 @@ class Schema {
             name: "max",
             message: message,
             validator: (value, mapping) => (this.validations.find(ob => ob.name == "number") ? Number(value) : value.length) <= max,
+        });
+        return this;
+    }
+
+    positive(message: string) {
+        this.validations.push({
+            name: "positive",
+            message: message,
+            validator: (value, mapping) => (this.validations.find(ob => ob.name == "number") ? Number(value) : value.length) > 0,
+        });
+        return this;
+    }
+
+    negative(message: string) {
+        this.validations.push({
+            name: "negative",
+            message: message,
+            validator: (value, mapping) => (this.validations.find(ob => ob.name == "number") ? Number(value) : value.length) < 0,
         });
         return this;
     }
@@ -173,8 +201,11 @@ class Nix {
     static email = (message: string) => new Schema().email(message)
     static string = (message: string) => new Schema().string(message)
     static number = (message: string) => new Schema().number(message)
+    static integer = (message: string) => new Schema().integer(message)
     static min = (min: number, message: string) => new Schema().min(min, message)
     static max = (max: number, message: string) => new Schema().max(max, message)
+    static positive = (message: string) => new Schema().positive(message)
+    static negative = (message: string) => new Schema().negative(message)
     static regexp = (expression: RegExp, message: string) => new Schema().regexp(expression, message)
     static custom = (validator: IValidator, message: string) => new Schema().custom(validator, message)
     static conditional = (path: string, schema: Schema, message: string) => new Schema().conditional(path, schema, message)
