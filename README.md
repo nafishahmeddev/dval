@@ -5,8 +5,9 @@ Dval is a lightweight and intuitive data validation module designed to validate 
 ## Installation
 
 You can install Dval using your preferred package manager. Here's how you can do it using npm:
-
+```
 npm install dval
+```
 
 ## Getting Started
 
@@ -22,12 +23,12 @@ const dval = require('dval');
 
    Define a schema that describes the structure and constraints for your data. You can use various validation rules to specify the expected properties, types, and conditions.
 ```
-   const schema = dval.object({
+const schema = dval.object({
    name: dval.string().required(),
    age: dval.number().positive().integer(),
    email: dval.string().email(),
    // Add more validation rules as needed
-   });
+});
 ```
 3. Validate Data:
 
